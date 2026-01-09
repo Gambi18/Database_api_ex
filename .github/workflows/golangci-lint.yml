@@ -19,7 +19,8 @@ jobs:
           go-version-file: go.mod
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@latest
+        uses: go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run ./...
+
         with:
           version: v1.55.2
           args: --timeout=5m
