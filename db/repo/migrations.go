@@ -9,19 +9,28 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"       // File source for migrations
 )
 
-// Migrate function applies migrations to the database.
-func Migrate(dbURL string, migrationsPath string) error {
+func newMigrator(dbURL, migrationsPath string) (*migrate.Migrate, error) {
 	absPath, err := filepath.Abs(migrationsPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Create a new migration instance with the absolute path
+	// Normalize to forward slashes for file URL compatibility
+	absPath = filepath.ToSlash(absPath)
+
 	m, err := migrate.New(
 		"file://"+absPath,
 		dbURL,
 	)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
 
+// Migrate function applies migrations to the database.
+func Migrate(dbURL string, migrationsPath string) error {
+	m, err := newMigrator(dbURL, migrationsPath)
 	if err != nil {
 		return err
 	}
@@ -38,16 +47,7 @@ func Migrate(dbURL string, migrationsPath string) error {
 
 // MigrateDown function rolls back migrations from the database.
 func MigrateDown(dbURL string, migrationsPath string) error {
-	absPath, err := filepath.Abs(migrationsPath)
-	if err != nil {
-		return err
-	}
-
-	// Create a new migration instance with the absolute path
-	m, err := migrate.New(
-		"file://"+absPath,
-		dbURL,
-	)
+	m, err := newMigrator(dbURL, migrationsPath)
 	if err != nil {
 		return err
 	}
