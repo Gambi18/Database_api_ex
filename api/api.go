@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const errIDRequired = "id is required"
+
 type MessageHandler struct {
 	querier repo.Querier
 }
@@ -56,7 +58,7 @@ func (h *MessageHandler) handleCreateMessage(c *gin.Context) {
 func (h *MessageHandler) handleGetMessage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": errIDRequired})
 		return
 	}
 
@@ -82,7 +84,7 @@ func (h *MessageHandler) handleGetAllMessages(c *gin.Context) {
 func (h *MessageHandler) handleGetThreadMessages(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": errIDRequired})
 		return
 	}
 
@@ -102,10 +104,10 @@ func (h *MessageHandler) handleGetThreadMessages(c *gin.Context) {
 func (h *MessageHandler) handleDeleteMessage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": errIDRequired})
 		return
 	}
-	
+
 	err := h.querier.DeleteMessageByID(c, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -118,7 +120,7 @@ func (h *MessageHandler) handleDeleteMessage(c *gin.Context) {
 func (h *MessageHandler) handleUpdateMessage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": errIDRequired})
 		return
 	}
 
@@ -145,11 +147,11 @@ func (h *MessageHandler) handleUpdateMessage(c *gin.Context) {
 	c.JSON(http.StatusOK, message)
 }
 
-//fucntion to count messages in a thread
+// fucntion to count messages in a thread
 func (h *MessageHandler) handleCountMessagesInThread(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": errIDRequired})
 		return
 	}
 
